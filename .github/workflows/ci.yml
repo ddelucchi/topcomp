@@ -18,7 +18,7 @@ jobs:
         run: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y git cmake ninja-build
       - uses: actions/checkout@v4
       - name: Configure
-        run: cmake -S . -B build -G Ninja -DBUILD_TESTS=OFF
+        run: cmake -S . -B build -G Ninja -DBUILD_TESTS=ON
       - name: Build
         run: cmake --build build --parallel
       - name: Note test boundary
