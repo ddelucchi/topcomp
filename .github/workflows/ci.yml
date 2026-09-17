@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  cuda-compile:
+    name: CUDA compile
+    runs-on: ubuntu-latest
+    container:
+      image: nvidia/cuda:12.4.1-devel-ubuntu22.04
+    steps:
+      - name: Install build tools
+        run: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y git cmake ninja-build
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DBUILD_TESTS=OFF
+      - name: Build
+        run: cmake --build build --parallel
+      - name: Note test boundary
+        run: echo "GPU runtime tests are not executed on GitHub-hosted runners; this job verifies CUDA compilation."
