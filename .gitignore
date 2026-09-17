@@ -1,0 +1,25 @@
+# Build artifacts
+build/
+
+# Test output
+test_output.txt
+
+# IDE / editor
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Compiled objects
+*.obj
+*.o
+*.exe
+*.pdb
+*.ilk
+*.lib
+*.exp
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
