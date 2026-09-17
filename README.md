@@ -1,48 +1,109 @@
-# Topological Computation / TopComp
+# TopComp
 
-TopComp is Daxx Delucchi's CUDA/C++ research framework for hybrid discrete, topological, and quantum computation.
+TopComp is an experimental CUDA/C++ framework for exploring hybrid discrete, algebraic, topological, and quantum computation in one executable research stack.
 
-## What is here
+The repository is best read as mathematical-computing software with a large internal verification harness, not as a claim of demonstrated quantum advantage or validated quantum hardware behavior.
 
-The project implements a layered, header-oriented compute stack:
+## Implemented layers
 
-- **State contract:** discrete qubit states, topological phase-space states, and hybrid tensor states.
-- **Algebraic foundations:** mirror-group operations, cocycles, shadow functors, Weyl operators, Clifford/Boolean algebra, Lie and representation theory, Witt dual numbers and jets.
-- **Quantum operations:** discrete and topological gates, hybrid operators, measurement, POVMs/PVMs, density matrices, CPTP channels, instruments, and Naimark dilation.
-- **Compiler and runtime:** typed intermediate representation, optimization/lowering, a virtual machine, platform roles, hardware topology, fibered memory, regime planning, persistent serialization, and pipeline execution.
-- **Exact dictionaries:** vector/operator/density decompositions, block and Walsh/Weyl faces, circuit kernels, transport, thermodynamic factorization, and probability reconstruction.
-- **CUDA execution:** GPU kernels for golden-flow orbits, cocycle-derived bits, bias/correlation reductions, gate evolution, and structure detection.
-- **External interface:** a handle-based C-compatible API surface in topcomp_api.cuh.
+### State and algebra
 
-The implementation is organized into logical layers in CMakeLists.txt (topcomp_core, topcomp_contract, topcomp_math, topcomp_doctrine, topcomp_ir, topcomp_runtime, and topcomp_api). The current layout keeps these layers in one header tree so they can later be split into libraries.
+- discrete qubit state
+- topological phase-space state
+- hybrid tensor state
+- mirror-group and cocycle operations
+- Weyl, Clifford/Boolean, Lie, and representation-theory utilities
+- Witt dual numbers and jet constructions
+
+### Quantum operations
+
+- gates over discrete, topological, and hybrid carriers
+- density operators
+- PVM/POVM measurement structures
+- channels and instruments
+- Naimark-style dilation experiments
+
+### Compiler/runtime
+
+- typed intermediate representation
+- semantic passes
+- virtual-machine/runtime structures
+- hardware-topology descriptors
+- fibered memory
+- regime planning
+- persistent serialization
+- pipeline execution
+- handle-based C-compatible API
+
+### CUDA
+
+CUDA kernels are included for selected orbit, gate, reduction, and structure-detection operations. The CMake project links against the CUDA runtime and cuRAND.
+
+## Verification harness
+
+`src/tests.cu` contains the project's internal check suite. The imported local snapshot reported 775 checks passing with zero failures.
+
+That number is useful as a regression record, but it is not independent validation of the mathematical framework. The tests encode the repository's own definitions, identities, tolerances, and expected behavior.
 
 ## Build
 
 Requirements:
 
-- CMake 3.18 or newer
-- CUDA toolkit and a CUDA-capable compiler
-- A GPU architecture supported by the project configuration (75;80;86;89;90)
+- CMake 3.18+
+- a C++17 compiler
+- CUDA toolkit
+- a CUDA-capable build toolchain
 
-Configure and build with:
+```bash
+cmake -S . -B build \
+  -DTOPCOMP_CUDA_ARCHITECTURES="75;80;86;89;90"
 
-~~~powershell
-cmake -S . -B build
-cmake --build build --config Release
-ctest --test-dir build -C Release --output-on-failure
-~~~
+cmake --build build --parallel
+```
 
-The primary targets are:
+To target one architecture, for example compute capability 8.6:
 
-- mir_compute — verification and demonstration driver
-- mir_tests — comprehensive automated test suite
+```bash
+cmake -S . -B build -DTOPCOMP_CUDA_ARCHITECTURES=86
+cmake --build build --parallel
+```
 
-## Local verification
+## Tests
 
-The existing Release test executable was rerun during this import and completed with:
+On a machine with a compatible NVIDIA GPU:
 
-~~~
-Results: 775 passed, 0 failed, 775 total
-~~~
+```bash
+ctest --test-dir build --output-on-failure
+```
 
-The repository import preserves the authored source, headers, build configuration, test suite, and reference material. Local build products, Visual Studio/CMake generated directories, binaries, logs, and empty output files are intentionally excluded.
+The hosted CI job intentionally performs CUDA compilation only. GitHub-hosted runners do not provide the GPU runtime environment required by the executable test suite.
+
+## Architecture
+
+The CMake target structure separates logical layers:
+
+- `topcomp_core`
+- `topcomp_contract`
+- `topcomp_math`
+- `topcomp_doctrine`
+- `topcomp_ir`
+- `topcomp_runtime`
+- `topcomp_api`
+
+They currently resolve into a shared header tree and are intended as architectural boundaries rather than independently packaged libraries.
+
+## Scope and claims
+
+TopComp does not claim:
+
+- quantum speedup
+- hardware error tolerance
+- physical realization of its topological constructions
+- equivalence to a production quantum SDK
+- external proof of the framework's mathematical interpretations
+
+It does provide a substantial executable environment for experimenting with those structures and checking internal algebraic/software invariants.
+
+## License
+
+Source is publicly viewable for portfolio and technical evaluation. See [LICENSE](LICENSE).
