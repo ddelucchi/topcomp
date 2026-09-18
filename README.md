@@ -43,7 +43,7 @@ CUDA kernels are included for selected orbit, gate, reduction, and structure-det
 
 `src/tests.cu` contains the project's internal check suite. The imported local snapshot reported 775 checks passing with zero failures.
 
-That number is useful as a regression record, but it is not independent validation of the mathematical framework. The tests encode the repository's own definitions, identities, tolerances, and expected behavior.
+That number is useful as a regression record, but it is not independent validation of the mathematical framework. The harness mixes exact/discrete invariants, tight floating-point identities, broad approximation sanity bounds, and runtime/API regressions. Those are deliberately separated in [VERIFICATION.md](VERIFICATION.md), including examples of the loose `0.01`–`0.3` approximation tolerances that should not be mistaken for precision validation.
 
 ## Build
 
@@ -76,7 +76,7 @@ On a machine with a compatible NVIDIA GPU:
 ctest --test-dir build --output-on-failure
 ```
 
-The hosted CI job intentionally performs CUDA compilation only. GitHub-hosted runners do not provide the GPU runtime environment required by the executable test suite.
+The hosted workflow is designed for CUDA compilation only; GitHub-hosted runners do not provide the NVIDIA GPU runtime environment required by the executable test suite. This account also currently reports workflow startup failures before job creation, so the repository does not claim a green hosted-CI state.
 
 ## Architecture
 
