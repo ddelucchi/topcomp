@@ -261,7 +261,7 @@ static void test_gates() {
     double u_norm_before = psi_u.norm2();
     hybrid_gates::apply_U_hyb(psi_u, 0.01);  // small t to stay in grid
     // Grid-boundary interpolation loses ~25% norm on 8x8 grid (2 boundary rows)
-    check_near(psi_u.norm2(), u_norm_before, 0.3, "U_t approx preserves norm");
+    check_near(psi_u.norm2(), u_norm_before, 0.3, "sanity bound: U_t approximate norm drift within 0.3");
 
     // Gate cost
     Gate gx = gate_X(0b11);
@@ -297,11 +297,11 @@ static void test_prng() {
 
     // Bias should be small
     double bias = stats::compute_bias(bits, N);
-    check(bias < 0.5, "bias < 0.5");
+    check(bias < 0.5, "sanity bound: sampler bias < 0.5");
 
     // TV distance check
     double tv = stats::compute_tv_distance(bits, N);
-    check(tv < 0.5, "TV < 0.5");
+    check(tv < 0.5, "sanity bound: sampler TV distance < 0.5");
 
     // Tail bound monotonicity
     double tb1 = stats::tail_bound(1000, 0.01);
@@ -2710,9 +2710,9 @@ static void test_platform() {
 
         // Uniform superposition → p(0) = p(1) = 0.5
         check_near(vm->prob(0, 0), 0.5, 0.05,
-                   "Lift disc→hyb: p(0) ≈ 0.5");
+                   "approximation sanity: lift disc→hyb p(0) ≈ 0.5");
         check_near(vm->prob(0, 1), 0.5, 0.05,
-                   "Lift disc→hyb: p(1) ≈ 0.5");
+                   "approximation sanity: lift disc→hyb p(1) ≈ 0.5");
         delete vm;
     }
 
@@ -2812,7 +2812,7 @@ static void test_platform() {
         ResultHandle* res = execute(prog);
         check(res != nullptr, "API advanced: got result");
         check_near(result_prob(res, 0, 0), 0.5, 0.05,
-                   "API advanced: lifted superposition p(0) ≈ 0.5");
+                   "approximation sanity: API lifted superposition p(0) ≈ 0.5");
 
         result_free(res);
         program_free(prog);
@@ -3620,7 +3620,7 @@ static void test_spectral_transport() {
         apply_U_pade(pade_psi, 0.1);
         double n1 = pade_psi.norm2();
         check(fabs(n1 - n0) < 0.1,
-              "ST: Padé transport preserves norm");
+              "sanity bound: Padé transport norm drift < 0.1");
 
         pade_psi.free();
     }
